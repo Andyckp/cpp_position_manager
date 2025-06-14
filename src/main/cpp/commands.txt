@@ -1,0 +1,4 @@
+
+g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 processor.cpp -o processor
+g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 publisher.cpp -o publisher
+g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 tradequeuemanager.cpp -o tradequeuemanager
