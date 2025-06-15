@@ -35,9 +35,9 @@ int main() {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         
         // Check for buffer full condition: do not overwrite an unread slot.
-        size_t currentWrite = ringBuffer->writeIndex.load(std::memory_order_relaxed);
+        size_t currentWrite = ringBuffer->writeIndex.pos.load(std::memory_order_relaxed);
         size_t nextWrite = (currentWrite + 1) % BUFFER_SIZE;
-        size_t currentRead = ringBuffer->readIndex.load(std::memory_order_acquire);
+        size_t currentRead = ringBuffer->readIndex.pos.load(std::memory_order_acquire);
         if (nextWrite == currentRead) {
             continue;
         }
@@ -52,7 +52,7 @@ int main() {
         
         // Publish: update the write index (release order ensures the write is visible).
         ringBuffer->events[currentWrite] = trade;
-        ringBuffer->writeIndex.store(nextWrite, std::memory_order_release);
+        ringBuffer->writeIndex.pos.store(nextWrite, std::memory_order_release);
     }
     
     munmap(ptr, shm_size);

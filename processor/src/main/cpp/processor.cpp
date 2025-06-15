@@ -27,8 +27,8 @@ int main() {
     std::unordered_map<PositionID, double, PositionIDHash> positionMap;
 
     while(true) {
-        size_t currentRead = ringBuffer->readIndex.load(std::memory_order_relaxed);
-        size_t currentWrite = ringBuffer->writeIndex.load(std::memory_order_acquire);
+        size_t currentRead = ringBuffer->readIndex.pos.load(std::memory_order_relaxed);
+        size_t currentWrite = ringBuffer->writeIndex.pos.load(std::memory_order_acquire);
         
         if (currentRead == currentWrite) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -52,7 +52,7 @@ int main() {
         
         // Advance the read index.
         size_t nextRead = (currentRead + 1) % BUFFER_SIZE;
-        ringBuffer->readIndex.store(nextRead, std::memory_order_release);
+        ringBuffer->readIndex.pos.store(nextRead, std::memory_order_release);
     }
     
     munmap(ptr, shm_size);

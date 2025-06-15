@@ -40,8 +40,8 @@ int main() {
     
     // Initialize
     TradeRingBuffer* ringBuffer = static_cast<TradeRingBuffer*>(ptr);
-    ringBuffer->readIndex.store(0, std::memory_order_relaxed);
-    ringBuffer->writeIndex.store(0, std::memory_order_relaxed);
+    ringBuffer->readIndex.pos.store(0, std::memory_order_relaxed);
+    ringBuffer->writeIndex.pos.store(0, std::memory_order_relaxed);
     
     std::cout << "Trade ring buffer created in shared memory." << std::endl;
     std::cout << "Press Ctrl+C to exit ..." << std::endl;
