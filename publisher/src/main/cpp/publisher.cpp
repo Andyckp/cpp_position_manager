@@ -27,6 +27,10 @@ int main() {
     
     TradeRingBuffer* ringBuffer = static_cast<TradeRingBuffer*>(ptr);
     
+    const char* sample_portfolio_ids[] = {
+        "PORTFOLIO_001", "PORTFOLIO_002", "PORTFOLIO_ABC", "PORTFOLIO_XYZ"
+    };
+
     while(true) {
         // Wait for 1ms between generating trades.
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -47,7 +51,9 @@ int main() {
         trade.instrument_id = rand() % 1000;           // Random instrument id.
         trade.price = (rand() % 10000) / 100.0;         // Random price between 0.0 and 100.00.
         trade.quantity = (rand() % 1000) / 10.0;        // Random quantity.
-        
+        std::strncpy(trade.portfolio_id, sample_portfolio_ids[rand() % 4], sizeof(trade.portfolio_id) - 1);
+        trade.portfolio_id[15] = '\0';  
+
         // Write the trade into the current slot.
         ringBuffer->events[currentWrite] = trade;
         

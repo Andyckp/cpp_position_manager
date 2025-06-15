@@ -26,6 +26,9 @@ int main() {
     
     TradeRingBuffer* ringBuffer = static_cast<TradeRingBuffer*>(ptr);
     
+    // Define a map to track quantities by position ID
+    std::unordered_map<PositionID, double, PositionIDHash> positionMap;
+
     while(true) {
         size_t currentRead = ringBuffer->readIndex.load(std::memory_order_relaxed);
         size_t currentWrite = ringBuffer->writeIndex.load(std::memory_order_acquire);
@@ -38,9 +41,24 @@ int main() {
         
         // Process the trade at the current read position.
         TradeEvent trade = ringBuffer->events[currentRead];
+        // std::cout << "Processing Trade: instrument_id = " << trade.instrument_id
+        //   << ", price = " << trade.price
+        //   << ", quantity = " << trade.quantity
+        //   << ", portfolio_id = " << trade.portfolio_id << "\n";
+        // std::cout.flush();
+
+        // Update quantity in the map
+        PositionID posKey = {trade.instrument_id, {}};
+        std::memcpy(posKey.portfolio_id, trade.portfolio_id, 16);  // Copy portfolio_id safely
+        positionMap[posKey] += trade.quantity;
+
         std::cout << "Processing Trade: instrument_id = " << trade.instrument_id
-                  << ", price = " << trade.price
-                  << ", quantity = " << trade.quantity << "\n";
+              << ", price = " << trade.price
+              << ", quantity = " << trade.quantity
+              << ", portfolio_id = " << trade.portfolio_id << "\n";
+        std::cout << "Updated Position Quantity: instrument_id = " << posKey.instrument_id
+          << ", portfolio_id = " << posKey.portfolio_id
+          << ", quantity = " << positionMap[posKey] << "\n";
         std::cout.flush();
         
         // Advance the read index.
