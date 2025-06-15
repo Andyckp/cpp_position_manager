@@ -1,4 +1,3 @@
-// publisher.cpp
 #include <iostream>
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -35,29 +34,24 @@ int main() {
         // Wait for 1ms between generating trades.
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         
-        // Read the current write and read indices.
+        // Check for buffer full condition: do not overwrite an unread slot.
         size_t currentWrite = ringBuffer->writeIndex.load(std::memory_order_relaxed);
         size_t nextWrite = (currentWrite + 1) % BUFFER_SIZE;
         size_t currentRead = ringBuffer->readIndex.load(std::memory_order_acquire);
-
-        // Check for buffer full condition: do not overwrite an unread slot.
         if (nextWrite == currentRead) {
-            // Buffer is full, so skip publishing until the consumer catches up.
             continue;
         }
         
         // Generate a random trade.
         TradeEvent trade;
-        trade.instrument_id = rand() % 1000;           // Random instrument id.
-        trade.price = (rand() % 10000) / 100.0;         // Random price between 0.0 and 100.00.
-        trade.quantity = (rand() % 1000) / 10.0;        // Random quantity.
+        trade.instrument_id = rand() % 1000;           
+        trade.price = (rand() % 10000) / 100.0;         
+        trade.quantity = (rand() % 1000) / 10.0;        
         std::strncpy(trade.portfolio_id, sample_portfolio_ids[rand() % 4], sizeof(trade.portfolio_id) - 1);
         trade.portfolio_id[15] = '\0';  
-
-        // Write the trade into the current slot.
-        ringBuffer->events[currentWrite] = trade;
         
         // Publish: update the write index (release order ensures the write is visible).
+        ringBuffer->events[currentWrite] = trade;
         ringBuffer->writeIndex.store(nextWrite, std::memory_order_release);
     }
     

@@ -1,4 +1,3 @@
-// manager.cpp
 #include <iostream>
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -18,28 +17,28 @@ int main() {
         shm_unlink(SHM_NAME);    // Remove the previous shared memory object
     }
 
-    // Create (or open) the shared memory object.
+    // Create (or open) the shared memory object
     int shm_fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
     if(shm_fd < 0) {
         perror("shm_open");
         return 1;
     }
     
-    // Set the memory segment to hold one TradeRingBuffer.
+    // Set the memory segment to hold one TradeRingBuffer
     size_t shm_size = sizeof(TradeRingBuffer);
     if (ftruncate(shm_fd, shm_size) == -1) {
         perror("ftruncate");
         return 1;
     }
     
-    // Map the shared memory into our address space.
+    // Map the shared memory into address space
     void* ptr = mmap(nullptr, shm_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
     if(ptr == MAP_FAILED) {
         perror("mmap");
         return 1;
     }
     
-    // Initialize the ring buffer.
+    // Initialize
     TradeRingBuffer* ringBuffer = static_cast<TradeRingBuffer*>(ptr);
     ringBuffer->readIndex.store(0, std::memory_order_relaxed);
     ringBuffer->writeIndex.store(0, std::memory_order_relaxed);
@@ -47,12 +46,12 @@ int main() {
     std::cout << "Trade ring buffer created in shared memory." << std::endl;
     std::cout << "Press Ctrl+C to exit ..." << std::endl;
     
-    // Keep running so that the shared memory remains valid.
+    // Keep running
     while(true) {
         sleep(1);
     }
     
-    // Cleanup (never reached in this example)
+    // Cleanup (never reached)
     munmap(ptr, shm_size);
     close(shm_fd);
     shm_unlink(SHM_NAME);

@@ -7,37 +7,34 @@
 constexpr size_t CACHE_LINE_SIZE = 64;
 constexpr size_t RINGBUFFER_SIZE = 1024;
 
-// Struct with padding to fit cache lines
 struct alignas(CACHE_LINE_SIZE) TradeEvent {
     long instrumentId;
     double price;
     double netQuantity;
 
-    // Padding to ensure the struct aligns to cache lines
     char padding[CACHE_LINE_SIZE - sizeof(long) - 2 * sizeof(double)];
 };
 
 struct alignas(CACHE_LINE_SIZE) PaddedAtomic {
     std::atomic<size_t> pos;
 
-    PaddedAtomic() : pos(0) {} // Ensures proper initialization
+    PaddedAtomic() : pos(0) {} 
 
     char padding[CACHE_LINE_SIZE - sizeof(std::atomic<size_t>)];
 };
 
-// RingBuffer with padded atomic variables to prevent false sharing
 class alignas(CACHE_LINE_SIZE) RingBuffer {
     private:
         TradeEvent buffer[RINGBUFFER_SIZE];
 
-        PaddedAtomic writePos; // Prevents false sharing
-        PaddedAtomic readPos;  // Prevents false sharing
+        PaddedAtomic writePos; 
+        PaddedAtomic readPos;  
 
 public:
     bool pushTrade(long instrumentId, double price, double netQuantity) {
         size_t nextWrite = (writePos.pos + 1) % RINGBUFFER_SIZE;
 
-        if (nextWrite == readPos.pos.load()) { // Prevent overwriting unread slots
+        if (nextWrite == readPos.pos.load()) { 
             return false;
         }
 
@@ -50,7 +47,7 @@ public:
     }
 
     bool processTrade() {
-        if (readPos.pos.load() == writePos.pos.load()) { // Buffer empty
+        if (readPos.pos.load() == writePos.pos.load()) { 
             return false;
         }
 
@@ -101,7 +98,7 @@ void runTest() {
     std::thread publisher(tradePublisher, std::ref(ringBuffer));
     std::thread processor(tradeProcessor, std::ref(ringBuffer));
 
-    std::this_thread::sleep_for(std::chrono::seconds(5)); // Run for a few seconds
+    std::this_thread::sleep_for(std::chrono::seconds(5)); 
 
     publisher.detach();
     processor.detach();
