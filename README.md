@@ -37,7 +37,9 @@ make # build the project
 ./bin/publisher &            # Start Trade Publisher
 ```
 
-## **Usage**
+---
+
+## **Next**
 1. Compare Aeron/SBE with custom-built shared memory queues
 2. Optimize memory layout and cache efficiency
 3. Enhance multi-threading performance
