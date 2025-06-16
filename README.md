@@ -1,15 +1,43 @@
-# cpp_position_manager
-The purpose of the project to learn the C++ capability by using a position manager as example. 
-It takes enriched trades and calculates the positions according to portfolio id. 
+# **cpp_position_manager**
 
-Tests the capability of message passing with shared memory queues for components on the same machines, e.g. trade enricher, position manager and pnl calculations. 
+## **Overview**
+This project explores **C++ capabilities** using a **position manager** as an example. It processes **enriched trades** and calculates **positions** based on **portfolio ID**.
 
-There are 5 components.
-(a) trade queue manager, which uses shared memory as ring buffer to transport enriched trades 
-(b) position queue manager, which uses shared memory as ring buffer to transport positions
-(c) test trade publisher, submits enriched trades to trade queue manager
-(d) position manager (the main component being tested), calculates and publishes positions to the position queue manager
-(e) test position subscriber, subscribes to the position queue manager 
+It also tests **message passing** using **shared memory ring buffers** for inter-component communication on the same machine.
 
-# next steps
-(1) compare Aeron/SBE with custom build shared memory queues and codes
+---
+
+## **Components**
+The system consists of **five components**, each utilizing **shared memory queues** for efficient data exchange:
+
+1. **Trade Queue Manager**  
+   - Uses a **shared memory ring buffer** to transport **enriched trades**.
+
+2. **Position Queue Manager**  
+   - Uses a **shared memory ring buffer** to transport **calculated positions**.
+
+3. **Test Trade Publisher**  
+   - Submits **enriched trades** to the **Trade Queue Manager**.
+
+4. **Position Manager (Main Component)**  
+   - Calculates **positions** based on **trades** and publishes them to the **Position Queue Manager**.
+
+5. **Test Position Subscriber**  
+   - Subscribes to the **Position Queue Manager** to receive **position updates**.
+
+---
+
+## **Usage**
+```sh
+make # build the project
+./bin/tradequeuemanager &   # Start Trade Queue Manager
+./bin/positionqueuemanager & # Start Position Queue Manager
+./bin/processor &            # Start Position Manager
+./bin/positionsubscriber &   # Start Position Subscriber
+./bin/publisher &            # Start Trade Publisher
+```
+
+## **Usage**
+1. Compare Aeron/SBE with custom-built shared memory queues
+2. Optimize memory layout and cache efficiency
+3. Enhance multi-threading performance
