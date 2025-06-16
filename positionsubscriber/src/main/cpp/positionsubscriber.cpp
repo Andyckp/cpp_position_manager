@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <thread>
 #include <chrono>
-#include "../../../../common/src/main/cpp/trade_ring_buffer.h"
+#include "../../../../common/src/main/cpp/data_structure.h"
 
 constexpr const char* SHM_NAME = "/position_ring_buffer_shm";
 

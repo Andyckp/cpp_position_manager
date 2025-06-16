@@ -6,7 +6,7 @@
 #include <chrono>
 #include <unordered_map>
 #include <cstring>
-#include "../../../../common/src/main/cpp/trade_ring_buffer.h"
+#include "../../../../common/src/main/cpp/data_structure.h"
 
 constexpr const char* SHM_NAME = "/trade_ring_buffer_shm";
 constexpr const char* POSITION_SHM_NAME = "/position_ring_buffer_shm";

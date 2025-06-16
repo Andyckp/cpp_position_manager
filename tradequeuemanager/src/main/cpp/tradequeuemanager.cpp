@@ -3,7 +3,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <cstring>
-#include "../../../../common/src/main/cpp/trade_ring_buffer.h"
+#include "../../../../common/src/main/cpp/data_structure.h"
 
 // Shared memory name (POSIX requires names starting with a slash)
 constexpr const char* SHM_NAME = "/trade_ring_buffer_shm";
