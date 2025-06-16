@@ -19,7 +19,7 @@ The system consists of **five components**, each utilizing **shared memory queue
 3. **Test Trade Publisher**  
    - Submits **enriched trades** to the **Trade Queue Manager**.
 
-4. **Position Manager (Main Component)**  
+4. **Position Manager (Main component to be tested)**  
    - Calculates **positions** based on **trades** and publishes them to the **Position Queue Manager**.
 
 5. **Test Position Subscriber**  
@@ -29,12 +29,12 @@ The system consists of **five components**, each utilizing **shared memory queue
 
 ## **Usage**
 ```sh
-make # build the project
-./bin/tradequeuemanager &   # Start Trade Queue Manager
-./bin/positionqueuemanager & # Start Position Queue Manager
-./bin/processor &            # Start Position Manager
-./bin/positionsubscriber &   # Start Position Subscriber
-./bin/publisher &            # Start Trade Publisher
+# build the project
+make 
+# start
+./bin/tradequeuemanager &; ./bin/positionqueuemanager &; ./bin/positionmanager &; ./bin/positionsubscriber &;./bin/tradepublisher
+# stop
+ps | grep "./bin" | grep -v grep | awk '{print $1}' | xargs kill -9
 ```
 
 ---
@@ -42,4 +42,4 @@ make # build the project
 ## **Next**
 1. Compare Aeron/SBE with custom-built shared memory queues
 2. Optimize memory layout and cache efficiency
-3. Enhance multi-threading performance
+3. Enhance multi-threading performance by data partitioning

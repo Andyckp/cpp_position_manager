@@ -1,4 +1,10 @@
-
-g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 processor.cpp -o processor
-g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 publisher.cpp -o publisher
+# individual compile
+g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 positionmanager.cpp -o positionmanager
+g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 tradepublisher.cpp -o tradepublisher
 g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 tradequeuemanager.cpp -o tradequeuemanager
+g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 positionsubscriber.cpp -o positionsubscriber
+g++ -std=c++17 -Wall -Wextra -O2 -pthread -arch arm64 positionqueuemanager.cpp -o positionqueuemanager
+
+# start and stop
+ps | grep "./bin" | grep -v grep | awk '{print $1}' | xargs kill -9
+./bin/tradequeuemanager &; ./bin/positionqueuemanager &; ./bin/positionmanager &; ./bin/positionsubscriber &;./bin/tradepublisher
